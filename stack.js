@@ -1,4 +1,4 @@
-//вариант 1
+//вариант 1 =============================================
 
 class Stack {
   items = {};
@@ -163,15 +163,7 @@ class Queue {
   }
 
   array() {
-    const nodes = [];
-    let currentNode = this.head;
 
-    while (currentNode) {
-      nodes.push(currentNode);
-      currentNode = currentNode.next;
-    }
-
-    return nodes;
   }
 }
 
