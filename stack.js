@@ -1,3 +1,5 @@
+//вариант 1
+
 class Stack {
   items = {};
   size = 0;
@@ -85,26 +87,152 @@ class Stack {
   }
 }
 
-const stack = new Stack(2);
+// const stack = new Stack(2);
 // const stack = Stack.fromIterable([20, 12, 5, 9]);
 
 // stack.push(1);
 // stack.push(2);
 // stack.push(3);
 // console.log('removed item', stack.pop());
-console.log(stack);
+// console.log(stack);
 // console.log(stack.toArray());
 // console.log(stack.isEmpty());
 
-// =======================================
+//вариант 2 ===========================================
+
+class StackNode {
+  constructor(value, next = null) {
+    this.value = value;
+    this.next = next;
+  }
+}
+
+class Queue {
+  constructor(maxSize) {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+
+    if (maxSize === undefined || maxSize === Infinity || maxSize === -Infinity || isNaN(maxSize)) {
+      throw new Error('Max size is invalid number');
+    };
+      
+    if (typeof maxSize === 'number' && maxSize >= 0) {
+      this.maxSize = maxSize;
+    }; 
+  }
+
+  enqueue(val) {
+    const newNode = new StackNode(val);
+
+    if (this.size && this.size >= this.maxSize) {
+      throw new Error('Stack overflow');
+    } else {
+      if (!this.size) {
+        this.head = newNode;
+        this.tail = newNode;
+      } else {
+        this.tail.next = newNode;
+        this.tail = newNode;
+      }
+    }
+
+    this.size++;
+  }
+
+  dequeue() {
+    if (!this.size) {
+      return null;
+    }
+
+    let node = this.head;
+
+    this.head = this.head.next;
+    node.next = null;
+    this.size--;
+
+    return node.val;
+  }
+
+  top() {
+    return this.head.val;
+  }
+
+  empty() {
+    return this.size === 0;
+  }
+
+  array() {
+    const nodes = [];
+    let currentNode = this.head;
+
+    while (currentNode) {
+      nodes.push(currentNode);
+      currentNode = currentNode.next;
+    }
+
+    return nodes;
+  }
+}
+
+class Stack2 {
+  constructor(maxSize = 10) {
+    this.queue = new Queue(maxSize);
+  }
+
+  isEmpty() {
+    return this.queue.empty();
+  }
+
+  push(val) {
+    let rotate = this.queue.size;
+
+    this.queue.enqueue(val);
+
+    while(rotate) {
+      this.queue.enqueue(this.queue.dequeue());
+      rotate--;
+    }
+  }
+
+  pop() {
+    return this.queue.dequeue();
+  }
+
+  peek() {
+    if (this.isEmpty()) {
+      return null;
+    }
+
+    return this.queue.top();
+  }
+
+  static fromIterable(collection) {
+    const items = [...collection];
+    const stack = new Stack2();
+
+    if (stack.items === undefined) {
+      throw new Error('Entity isn\'t iterable');
+    };
+
+    for (const item of items) {
+      stack.push(item);
+    };
+
+    return stack;
+  }
+}
+
+const stack2 = new Stack2();
+stack2.push(1);
+stack2.push(2);
+
+// ===============================================
 
 class LinkedListNode {
   constructor(value, next = null) {
     this.value = value;
     this.next = next;
-  }
-  toString() {
-    return `${this.value}`;
   }
 }
 
@@ -194,5 +322,5 @@ class LinkedList {
 // list.append("a").append("b").append("c");
 // console.log(list.toArray());
 
-// module.exports = { Stack };
-// module.exports = { LinkedList };
+module.exports = { Stack };
+module.exports = { LinkedList };
