@@ -1,223 +1,99 @@
-//вариант 1 =============================================
-
-class Stack {
-  items = {};
-  size = 0;
-  maxSize = 10;
-
-  constructor(maxSize) {
-    if (maxSize === undefined || maxSize === Infinity || maxSize === -Infinity || isNaN(maxSize)) {
-      throw new Error('Max size is invalid number');
-    };
-
-    if (typeof maxSize === 'number' && maxSize >= 0) {
-      this.maxSize = maxSize;
-    }; 
-  }
-
-  isEmpty() {
-    return !this.size;
-  }
-
-  push(item) {
-    //при условии надобности проверки item
-
-    // if (item === Infinity || item === -Infinity || isNaN(item)) {
-    //   throw new Error('Item is invalid number');
-    // };
-
-    if (this.size && this.size >= this.maxSize) {
-      throw new Error('Stack overflow');
-    } else {
-      this.items[this.size] = item;
-      this.size++; 
-    }
-  };
-
-  peek() {
-    if (this.isEmpty()) {
-      return null;
-    }
-
-    return this.items[this.size - 1];
-  }
-
-  pop() {
-    if (this.isEmpty()) {
-      throw new Error('Stack is empty');
-    }
-
-    const removedItem = this.peek();
-
-    delete this.items[this.size - 1];
-    this.size--;
-
-    return removedItem;
-  }
-
-  toArray() {
-    const arr = [];
-
-    while (!this.isEmpty()) {
-      arr.push(this.pop());
-    }
-
-    const resultArr = arr.reverse();
-
-    for (const item of resultArr) {
-      this.push(item);
-    }
-
-    return resultArr;
-  }
-
-  static fromIterable(collection) {
-    const items = [...collection];
-    const stack = new Stack(items.length);
-
-    if (stack.items === undefined) {
-      throw new Error('Entity isn\'t iterable');
-    };
-
-    for (const item of items) {
-      stack.push(item);
-    };
-
-    return stack;
-  }
-}
-
-// const stack = new Stack(2);
-// const stack = Stack.fromIterable([20, 12, 5, 9]);
-
-// stack.push(1);
-// stack.push(2);
-// stack.push(3);
-// console.log('removed item', stack.pop());
-// console.log(stack);
-// console.log(stack.toArray());
-// console.log(stack.isEmpty());
-
-//вариант 2 ===========================================
-
 class StackNode {
-  constructor(value, next = null) {
-    this.value = value;
+  constructor(data, next) {
+    this.data = data;
     this.next = next;
   }
 }
 
-class Queue {
-  constructor(maxSize) {
-    this.head = null;
-    this.tail = null;
+class Stack {
+  constructor(maxSize = 10) {
+    this.top = null;
     this.size = 0;
-
+    
     if (maxSize === undefined || maxSize === Infinity || maxSize === -Infinity || isNaN(maxSize)) {
       throw new Error('Max size is invalid number');
     };
-      
+
     if (typeof maxSize === 'number' && maxSize >= 0) {
       this.maxSize = maxSize;
     }; 
   }
-
-  enqueue(val) {
-    const newNode = new StackNode(val);
-
+  
+  isEmpty() {
+    return this.top === null;
+  }
+  
+  push(value) {
     if (this.size && this.size >= this.maxSize) {
       throw new Error('Stack overflow');
     } else {
-      if (!this.size) {
-        this.head = newNode;
-        this.tail = newNode;
-      } else {
-        this.tail.next = newNode;
-        this.tail = newNode;
-      }
-    }
-
-    this.size++;
+      const node = new StackNode(value);
+    
+      node.next = this.top;
+      this.top = node;
+      this.size++;
+    };
   }
-
-  dequeue() {
-    if (!this.size) {
-      return null;
-    }
-
-    let node = this.head;
-
-    this.head = this.head.next;
-    node.next = null;
-    this.size--;
-
-    return node.val;
-  }
-
-  top() {
-    return this.head.val;
-  }
-
-  empty() {
-    return this.size === 0;
-  }
-
-  array() {
-
-  }
-}
-
-class Stack2 {
-  constructor(maxSize = 10) {
-    this.queue = new Queue(maxSize);
-  }
-
-  isEmpty() {
-    return this.queue.empty();
-  }
-
-  push(val) {
-    let rotate = this.queue.size;
-
-    this.queue.enqueue(val);
-
-    while(rotate) {
-      this.queue.enqueue(this.queue.dequeue());
-      rotate--;
-    }
-  }
-
+  
   pop() {
-    return this.queue.dequeue();
+    if (this.isEmpty()) {
+      throw new Error('Stack is empty');
+    };
+    
+    const result = this.top;
+    
+    this.top = this.top.next;
+    this.size--;
+    
+    return result.data;
   }
-
+  
   peek() {
     if (this.isEmpty()) {
       return null;
+    };
+    
+    return this.top.data;
+  }
+  
+   toArray() {
+    const nodes = [];
+    let currentNode = this.top;
+
+    while (currentNode) {
+      nodes.push(currentNode);
+      currentNode = currentNode.next;
     }
 
-    return this.queue.top();
+    return nodes;
   }
-
+  
   static fromIterable(collection) {
     const items = [...collection];
-    const stack = new Stack2();
-
-    if (stack.items === undefined) {
-      throw new Error('Entity isn\'t iterable');
-    };
+    const stack = new Stack(items.length);
 
     for (const item of items) {
       stack.push(item);
     };
-
+    
+    if (!stack.top) {
+      throw new Error('Entity isn\'t iterable');
+    };
+    
     return stack;
   }
 }
 
-const stack2 = new Stack2();
-stack2.push(1);
-stack2.push(2);
+// const stack = new Stack(3);
+// const stack = Stack.fromIterable([20, 55, 3, 11])
+
+// stack.push(1)
+// stack.push(2)
+// stack.push(3)
+// console.log(`pop`, stack.pop());
+// console.log(`peek`,stack.peek());
+// console.log(stack.toArray())
+// console.log(stack);
 
 // ===============================================
 
@@ -296,14 +172,14 @@ class LinkedList {
     const items = [...collection];
     const stack = new LinkedList();
 
-    if (stack.items === undefined) {
+    for (const item of items) {
+      stack.prepend(item);
+    };
+    
+    if (!stack.head) {
       throw new Error('Entity isn\'t iterable');
     };
-
-    for (const item of items) {
-      stack.push(item);
-    };
-
+    
     return stack;
   }
 }
